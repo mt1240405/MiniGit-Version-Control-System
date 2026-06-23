@@ -14,6 +14,26 @@ namespace
     };
 }
 
+void FileVersion::DeleteVersionTree(TreeNode* node)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    for (TreeNode* child : node->Children)
+    {
+        DeleteVersionTree(child);
+    }
+
+    delete node;
+}
+
+FileVersion::~FileVersion()
+{
+    DeleteVersionTree(root);
+}
+
 FileVersion::FileVersion()
     : versionIndex(100003)
 {

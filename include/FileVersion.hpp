@@ -20,10 +20,12 @@ private:
 
     int lastModified;
 
+    void DeleteVersionTree(TreeNode* node);
+
 public:
 
     FileVersion();
-
+    ~FileVersion();
     void SetFileName(
         const string& name);
 
