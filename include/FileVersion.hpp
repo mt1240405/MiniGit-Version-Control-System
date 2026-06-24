@@ -22,6 +22,10 @@ private:
 
     void DeleteVersionTree(TreeNode* node);
 
+    void SearchHistoryDfs(
+    TreeNode* node,
+    const string& pattern);
+
 public:
 
     FileVersion();
@@ -50,6 +54,13 @@ public:
         int versionId = -1);
 
     void PrintHistory() const;
+
+    void SearchPattern(
+    const string& pattern);
+
+    void SearchPatternHistory(
+    const string& pattern);
+    
 };
 
 struct RecentFileComparator

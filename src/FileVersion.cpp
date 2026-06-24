@@ -1,4 +1,5 @@
 #include "../include/FileVersion.hpp"
+#include "../include/KmpPatternMatcher.hpp"
 
 namespace
 {
@@ -272,3 +273,73 @@ bool LargestVersionComparator::operator()(
         >
         right->GetTotalVersions();
 }
+
+void FileVersion::SearchPattern(
+    const string& pattern)
+{
+    vector<int> matches =
+        KmpPatternMatcher::Search(
+            activeVersion->Content,
+            pattern);
+
+    if (matches.empty())
+    {
+        cout
+            << "Pattern not found"
+            << endl;
+
+        return;
+    }
+
+    cout
+        << "Found at indices: ";
+
+    for (int position : matches)
+    {
+        cout
+            << position
+            << " ";
+    }
+
+    cout << endl;
+}
+
+void FileVersion::SearchHistoryDfs(
+    TreeNode* node,
+    const string& pattern)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    vector<int> matches =
+        KmpPatternMatcher::Search(
+            node->Content,
+            pattern);
+
+    if (!matches.empty())
+    {
+        cout
+            << "Version "
+            << node->VersionId
+            << endl;
+    }
+
+    for (TreeNode* child :
+         node->Children)
+    {
+        SearchHistoryDfs(
+            child,
+            pattern);
+    }
+}
+
+void FileVersion::SearchPatternHistory(
+    const string& pattern)
+{
+    SearchHistoryDfs(
+        root,
+        pattern);
+}
+

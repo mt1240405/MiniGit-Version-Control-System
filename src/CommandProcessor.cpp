@@ -10,7 +10,7 @@ void CommandProcessor::HandleCreate()
 
     cin >> fileName;
 
-    FileVersion* file = nullptr;
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -40,7 +40,7 @@ void CommandProcessor::HandleRead()
 
     cin >> fileName;
 
-    FileVersion* file = nullptr;
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -64,11 +64,16 @@ void CommandProcessor::HandleInsert()
     string fileName;
     string content;
 
-    cin
-        >> fileName
-        >> content;
+    cin >> fileName;
 
-    FileVersion* file = nullptr;
+    getline(cin, content);
+
+    if (!content.empty() && content[0] == ' ')
+    {
+        content.erase(0, 1);
+    }
+
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -94,11 +99,16 @@ void CommandProcessor::HandleUpdate()
     string fileName;
     string content;
 
-    cin
-        >> fileName
-        >> content;
+    cin >> fileName;
 
-    FileVersion* file = nullptr;
+    getline(cin, content);
+
+    if (!content.empty() && content[0] == ' ')
+    {
+        content.erase(0, 1);
+    }
+
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -127,11 +137,14 @@ void CommandProcessor::HandleSnapshot()
 
     string message;
 
-    getline(
-        cin,
-        message);
+    getline(cin, message);
 
-    FileVersion* file = nullptr;
+    if (!message.empty() && message[0] == ' ')
+    {
+        message.erase(0, 1);
+    }
+
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -159,7 +172,7 @@ void CommandProcessor::HandleRollback()
 
     cin >> fileName;
 
-    FileVersion* file = nullptr;
+    FileVersion *file = nullptr;
 
     if (
         !fileRegistry.Get(
@@ -198,7 +211,7 @@ void CommandProcessor::HandleHistory()
 
     cin >> fileName;
 
-    FileVersion* file = nullptr;
+    FileVersion *file = nullptr;
 
     if (
         fileRegistry.Get(
@@ -221,7 +234,7 @@ void CommandProcessor::HandleRecentFiles()
 
     cin >> count;
 
-    vector<FileVersion*> popped;
+    vector<FileVersion *> popped;
 
     for (
         int index = 0;
@@ -229,7 +242,7 @@ void CommandProcessor::HandleRecentFiles()
         !recentFiles.Empty();
         ++index)
     {
-        FileVersion* file =
+        FileVersion *file =
             recentFiles.Top();
 
         cout
@@ -243,8 +256,7 @@ void CommandProcessor::HandleRecentFiles()
     }
 
     for (
-        FileVersion* file
-        : popped)
+        FileVersion *file : popped)
     {
         recentFiles.Push(
             file);
@@ -257,7 +269,7 @@ void CommandProcessor::HandleLargestFiles()
 
     cin >> count;
 
-    vector<FileVersion*> popped;
+    vector<FileVersion *> popped;
 
     for (
         int index = 0;
@@ -265,7 +277,7 @@ void CommandProcessor::HandleLargestFiles()
         !largestFiles.Empty();
         ++index)
     {
-        FileVersion* file =
+        FileVersion *file =
             largestFiles.Top();
 
         cout
@@ -279,11 +291,63 @@ void CommandProcessor::HandleLargestFiles()
     }
 
     for (
-        FileVersion* file
-        : popped)
+        FileVersion *file : popped)
     {
         largestFiles.Push(
             file);
+    }
+}
+
+void CommandProcessor::HandleSearch()
+{
+    string fileName;
+
+    string pattern;
+
+    cin >> fileName;
+
+    getline(cin, pattern);
+
+    if (!pattern.empty() && pattern[0] == ' ')
+    {
+        pattern.erase(0, 1);
+    }
+    FileVersion *file = nullptr;
+
+    if (
+        fileRegistry.Get(
+            fileName,
+            file))
+    {
+        file->SearchPattern(
+            pattern);
+    }
+}
+
+void CommandProcessor::HandleSearchHistory()
+{
+    string fileName;
+
+    string pattern;
+
+    cin >> fileName;
+
+    getline(cin, pattern);
+
+    if (!pattern.empty() && pattern[0] == ' ')
+    {
+        pattern.erase(0, 1);
+    }
+
+    FileVersion *file = nullptr;
+
+    if (
+        fileRegistry.Get(
+            fileName,
+            file))
+    {
+        file->SearchPatternHistory(
+            pattern);
     }
 }
 
@@ -328,6 +392,14 @@ void CommandProcessor::Run()
         else if (command == "BIGGEST_FILES")
         {
             HandleLargestFiles();
+        }
+        else if (command == "SEARCH")
+        {
+            HandleSearch();
+        }
+        else if (command == "SEARCH_HISTORY")
+        {
+            HandleSearchHistory();
         }
         else
         {

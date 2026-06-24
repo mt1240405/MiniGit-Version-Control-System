@@ -36,6 +36,10 @@ private:
 
     void HandleLargestFiles();
 
+    void HandleSearch();
+
+    void HandleSearchHistory();
+
 public:
 
     CommandProcessor();
