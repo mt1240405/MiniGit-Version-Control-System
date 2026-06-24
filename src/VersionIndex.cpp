@@ -11,7 +11,7 @@ bool VersionIndex::Put(
 {
     if (versionId >= static_cast<int>(table.size()))
     {
-        table.resize(versionId * 2, nullptr);
+        table.resize(versionId * 2 + 1, nullptr);
     }
 
     table[versionId] = node;
