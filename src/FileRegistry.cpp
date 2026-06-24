@@ -86,3 +86,23 @@ bool FileRegistry::Get(
 
     return false;
 }
+
+void FileRegistry::Clear()
+{
+    for (Entry& entry : table)
+    {
+        if (
+            entry.used &&
+            !entry.tomb &&
+            entry.value)
+        {
+            delete entry.value;
+        }
+    }
+
+    table.clear();
+
+    table.resize(capacity);
+
+    size = 0;
+}

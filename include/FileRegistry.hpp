@@ -24,4 +24,6 @@ public:
     bool Put(const string &key, FileVersion *value);
 
     bool Get(const string &key, FileVersion *&result);
+
+    void Clear();
 };

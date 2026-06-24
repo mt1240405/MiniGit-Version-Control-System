@@ -204,4 +204,9 @@ public:
         return static_cast<int>(
             heap.size());
     }
+
+    void Clear()
+    {
+        heap.clear();
+    }
 };

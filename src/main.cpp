@@ -8,7 +8,15 @@ int main()
 
     CommandProcessor processor;
 
-    processor.Run();
+     ifstream logFile("commands.log");
+     auto *CinBuffer = cin.rdbuf();
+     cin.rdbuf(logFile.rdbuf());
+
+    processor.SetReplayMode(true);
+    processor.Run(cin);
+    cin.rdbuf(CinBuffer);
+    processor.SetReplayMode(false);
+    processor.Run(cin);
 
     return 0;
 }

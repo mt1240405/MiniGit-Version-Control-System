@@ -5,6 +5,7 @@
 #include "FileRegistry.hpp"
 #include "FileVersion.hpp"
 #include "BinaryHeap.hpp"
+#include "CommandJournal.hpp"
 
 class CommandProcessor
 {
@@ -17,6 +18,8 @@ private:
 
     BinaryHeap<LargestVersionComparator>
         largestFiles;
+
+    bool isReplay;
 
     void HandleCreate();
 
@@ -42,9 +45,11 @@ private:
 
     void HandleStats();
 
+    void HandleClear();
+
 public:
 
-    CommandProcessor();
-
-    void Run();
+    void SetReplayMode(bool isReplayActive);
+    bool ReplayMode();
+    void Run(istream &input);
 };

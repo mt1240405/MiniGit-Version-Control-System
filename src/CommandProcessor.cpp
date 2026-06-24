@@ -1,9 +1,5 @@
 #include "../include/CommandProcessor.hpp"
 
-CommandProcessor::CommandProcessor()
-{
-}
-
 void CommandProcessor::HandleCreate()
 {
     string fileName;
@@ -23,6 +19,8 @@ void CommandProcessor::HandleCreate()
 
         return;
     }
+    if(!ReplayMode())
+    CommandJournal::Append("CREATE " + fileName);
 
     file = new FileVersion();
 
@@ -80,6 +78,9 @@ void CommandProcessor::HandleInsert()
             fileName,
             file))
     {
+        if(!ReplayMode())
+        CommandJournal::Append("INSERT " + fileName + " " + content);
+
         file->Insert(content);
 
         recentFiles.Push(file);
@@ -115,6 +116,9 @@ void CommandProcessor::HandleUpdate()
             fileName,
             file))
     {
+        if(!ReplayMode())
+        CommandJournal::Append("UPDATE " + fileName + " " + content);
+
         file->Update(content);
 
         recentFiles.Push(file);
@@ -151,6 +155,9 @@ void CommandProcessor::HandleSnapshot()
             fileName,
             file))
     {
+        if(!ReplayMode())
+        CommandJournal::Append("SNAPSHOT " + fileName + " " + message);
+
         file->Snapshot(
             message);
 
@@ -312,6 +319,7 @@ void CommandProcessor::HandleSearch()
     {
         pattern.erase(0, 1);
     }
+
     FileVersion *file = nullptr;
 
     if (
@@ -368,7 +376,32 @@ void CommandProcessor::HandleStats()
     }
 }
 
-void CommandProcessor::Run()
+void CommandProcessor::HandleClear()
+{
+    fileRegistry.Clear();
+
+    recentFiles.Clear();
+
+    largestFiles.Clear();
+
+    CommandJournal::Clear();
+
+    cout
+        << "Repository reset"
+        << endl;
+}
+
+void CommandProcessor::SetReplayMode(bool isReplayActive)
+{
+    isReplay = isReplayActive;
+}
+
+bool CommandProcessor::ReplayMode()
+{
+    return isReplay;
+}
+
+void CommandProcessor::Run(istream &input)
 {
     string command;
 
@@ -422,11 +455,17 @@ void CommandProcessor::Run()
         {
             HandleStats();
         }
+        else if (command == "CLEAR")
+        {
+            HandleClear();
+        }
         else
         {
             cout
                 << "Unknown command"
                 << endl;
         }
+
+        this_thread::sleep_for(chrono::seconds(1));
     }
 }
