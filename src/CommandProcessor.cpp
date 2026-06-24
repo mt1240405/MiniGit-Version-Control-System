@@ -351,6 +351,23 @@ void CommandProcessor::HandleSearchHistory()
     }
 }
 
+void CommandProcessor::HandleStats()
+{
+    string fileName;
+
+    cin >> fileName;
+
+    FileVersion* file = nullptr;
+
+    if (
+        fileRegistry.Get(
+            fileName,
+            file))
+    {
+        file->PrintStatistics();
+    }
+}
+
 void CommandProcessor::Run()
 {
     string command;
@@ -400,6 +417,10 @@ void CommandProcessor::Run()
         else if (command == "SEARCH_HISTORY")
         {
             HandleSearchHistory();
+        }
+        else if (command == "STATS")
+        {
+            HandleStats();
         }
         else
         {

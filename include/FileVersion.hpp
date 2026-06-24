@@ -60,6 +60,8 @@ public:
 
     void SearchPatternHistory(
     const string& pattern);
+
+    void PrintStatistics();
     
 };
 

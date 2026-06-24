@@ -343,3 +343,57 @@ void FileVersion::SearchPatternHistory(
         pattern);
 }
 
+void FileVersion::PrintStatistics()
+{
+    int snapshotCount = 0;
+
+    vector<TreeNode*> stack;
+
+    stack.push_back(root);
+
+    while (!stack.empty())
+    {
+        TreeNode* current =
+            stack.back();
+
+        stack.pop_back();
+
+        if (
+            current->SnapshotTimestamp != 0)
+        {
+            snapshotCount++;
+        }
+
+        for (
+            TreeNode* child :
+            current->Children)
+        {
+            stack.push_back(child);
+        }
+    }
+
+    cout
+        << "File Name: "
+        << fileName
+        << endl;
+
+    cout
+        << "Versions: "
+        << totalVersions + 1
+        << endl;
+
+    cout
+        << "Snapshots: "
+        << snapshotCount
+        << endl;
+
+    cout
+        << "Current Version: "
+        << activeVersion->VersionId
+        << endl;
+
+    cout
+        << "Content Length: "
+        << activeVersion->Content.size()
+        << endl;
+}

@@ -40,6 +40,8 @@ private:
 
     void HandleSearchHistory();
 
+    void HandleStats();
+
 public:
 
     CommandProcessor();
