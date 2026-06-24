@@ -465,7 +465,7 @@ void CommandProcessor::Run(istream &input)
                 << "Unknown command"
                 << endl;
         }
-
+        if(!ReplayMode())
         this_thread::sleep_for(chrono::seconds(1));
     }
 }
