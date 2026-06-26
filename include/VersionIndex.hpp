@@ -8,9 +8,7 @@ class VersionIndex
 
 public:
     explicit VersionIndex(int initialCapacity = 10000);
-
     bool Put(int versionId, TreeNode *node);
-
     bool Get(int versionId, TreeNode *&result);
     
 };

@@ -2,10 +2,6 @@
 
 int main()
 {
-    ios::sync_with_stdio(false);
-
-    cin.tie(nullptr);
-
     CommandProcessor processor;
 
      ifstream logFile("commands.log");

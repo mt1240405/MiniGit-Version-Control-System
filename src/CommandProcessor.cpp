@@ -3,193 +3,115 @@
 void CommandProcessor::HandleCreate()
 {
     string fileName;
-
     cin >> fileName;
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        cout
-            << "File already exists"
-            << endl;
-
+        cout << "File already exists" << endl;
         return;
     }
-    if(!ReplayMode())
-    CommandJournal::Append("CREATE " + fileName);
-
+    if (!ReplayMode())
+        CommandJournal::Append("CREATE " + fileName);
     file = new FileVersion();
-
-    file->SetFileName(
-        fileName);
-
-    fileRegistry.Put(
-        fileName,
-        file);
+    file->SetFileName(fileName);
+    fileRegistry.Put(fileName, file);
 }
 
 void CommandProcessor::HandleRead()
 {
     string fileName;
-
     cin >> fileName;
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        cout
-            << file->GetContent()
-            << endl;
-
+        cout << file->GetContent() << endl;
         return;
     }
-
-    cout
-        << "No such file"
-        << endl;
+    cout << "No such file" << endl;
 }
 
 void CommandProcessor::HandleInsert()
 {
     string fileName;
     string content;
-
     cin >> fileName;
-
     getline(cin, content);
-
     if (!content.empty() && content[0] == ' ')
     {
         content.erase(0, 1);
     }
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        if(!ReplayMode())
-        CommandJournal::Append("INSERT " + fileName + " " + content);
-
+        if (!ReplayMode())
+            CommandJournal::Append("INSERT " + fileName + " " + content);
         file->Insert(content);
-
         recentFiles.Push(file);
-
         largestFiles.Push(file);
 
         return;
     }
-
-    cout
-        << "No such file"
-        << endl;
+    cout << "No such file" << endl;
 }
 
 void CommandProcessor::HandleUpdate()
 {
     string fileName;
     string content;
-
     cin >> fileName;
-
     getline(cin, content);
-
     if (!content.empty() && content[0] == ' ')
     {
         content.erase(0, 1);
     }
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        if(!ReplayMode())
-        CommandJournal::Append("UPDATE " + fileName + " " + content);
-
+        if (!ReplayMode())
+            CommandJournal::Append("UPDATE " + fileName + " " + content);
         file->Update(content);
-
         recentFiles.Push(file);
-
         largestFiles.Push(file);
 
         return;
     }
-
-    cout
-        << "No such file"
-        << endl;
+    cout << "No such file" << endl;
 }
 
 void CommandProcessor::HandleSnapshot()
 {
     string fileName;
-
     cin >> fileName;
-
     string message;
-
     getline(cin, message);
-
     if (!message.empty() && message[0] == ' ')
     {
         message.erase(0, 1);
     }
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        if(!ReplayMode())
-        CommandJournal::Append("SNAPSHOT " + fileName + " " + message);
-
-        file->Snapshot(
-            message);
-
+        if (!ReplayMode())
+            CommandJournal::Append("SNAPSHOT " + fileName + " " + message);
+        file->Snapshot(message);
         recentFiles.Push(file);
-
         largestFiles.Push(file);
 
         return;
     }
 
-    cout
-        << "No such file"
-        << endl;
+    cout << "No such file" << endl;
 }
 
 void CommandProcessor::HandleRollback()
 {
     string fileName;
-
     cin >> fileName;
-
     FileVersion *file = nullptr;
 
-    if (
-        !fileRegistry.Get(
-            fileName,
-            file))
+    if (!fileRegistry.Get(fileName, file))
     {
-        cout
-            << "No such file"
-            << endl;
-
+        cout << "No such file" << endl;
         return;
     }
 
@@ -200,177 +122,103 @@ void CommandProcessor::HandleRollback()
     else
     {
         int versionId;
-
         cin >> versionId;
-
-        file->Rollback(
-            versionId);
+        file->Rollback(versionId);
     }
-
     recentFiles.Push(file);
-
     largestFiles.Push(file);
 }
 
 void CommandProcessor::HandleHistory()
 {
     string fileName;
-
     cin >> fileName;
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
         file->PrintHistory();
-
         return;
     }
-
-    cout
-        << "No such file"
-        << endl;
+    cout << "No such file" << endl;
 }
 
 void CommandProcessor::HandleRecentFiles()
 {
     int count;
-
     cin >> count;
-
     vector<FileVersion *> popped;
-
-    for (
-        int index = 0;
-        index < count &&
-        !recentFiles.Empty();
-        ++index)
+    for (int index = 0; index < count && !recentFiles.Empty(); ++index)
     {
-        FileVersion *file =
-            recentFiles.Top();
-
-        cout
-            << file->GetFileName()
-            << endl;
-
-        popped.push_back(
-            file);
-
+        FileVersion *file = recentFiles.Top();
+        cout << file->GetFileName() << endl;
+        popped.push_back(file);
         recentFiles.Pop();
     }
-
-    for (
-        FileVersion *file : popped)
+    for (FileVersion *file : popped)
     {
-        recentFiles.Push(
-            file);
+        recentFiles.Push(file);
     }
 }
 
 void CommandProcessor::HandleLargestFiles()
 {
     int count;
-
     cin >> count;
-
     vector<FileVersion *> popped;
-
-    for (
-        int index = 0;
-        index < count &&
-        !largestFiles.Empty();
-        ++index)
+    for (int index = 0; index < count && !largestFiles.Empty(); ++index)
     {
-        FileVersion *file =
-            largestFiles.Top();
-
-        cout
-            << file->GetFileName()
-            << endl;
-
-        popped.push_back(
-            file);
-
+        FileVersion *file = largestFiles.Top();
+        cout << file->GetFileName() << endl;
+        popped.push_back(file);
         largestFiles.Pop();
     }
-
-    for (
-        FileVersion *file : popped)
+    for (FileVersion *file : popped)
     {
-        largestFiles.Push(
-            file);
+        largestFiles.Push(file);
     }
 }
 
 void CommandProcessor::HandleSearch()
 {
     string fileName;
-
     string pattern;
-
     cin >> fileName;
-
     getline(cin, pattern);
-
     if (!pattern.empty() && pattern[0] == ' ')
     {
         pattern.erase(0, 1);
     }
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        file->SearchPattern(
-            pattern);
+        file->SearchPattern(pattern);
     }
 }
 
 void CommandProcessor::HandleSearchHistory()
 {
     string fileName;
-
     string pattern;
-
     cin >> fileName;
-
     getline(cin, pattern);
-
     if (!pattern.empty() && pattern[0] == ' ')
     {
         pattern.erase(0, 1);
     }
-
     FileVersion *file = nullptr;
-
-    if (
-        fileRegistry.Get(
-            fileName,
-            file))
+    if (fileRegistry.Get(fileName, file))
     {
-        file->SearchPatternHistory(
-            pattern);
+        file->SearchPatternHistory(pattern);
     }
 }
 
 void CommandProcessor::HandleStats()
 {
     string fileName;
-
     cin >> fileName;
-
-    FileVersion* file = nullptr;
-
+    FileVersion *file = nullptr;
     if (
-        fileRegistry.Get(
-            fileName,
-            file))
+        fileRegistry.Get(fileName, file))
     {
         file->PrintStatistics();
     }
@@ -379,16 +227,10 @@ void CommandProcessor::HandleStats()
 void CommandProcessor::HandleClear()
 {
     fileRegistry.Clear();
-
     recentFiles.Clear();
-
     largestFiles.Clear();
-
     CommandJournal::Clear();
-
-    cout
-        << "Repository reset"
-        << endl;
+    cout << "Repository reset" << endl;
 }
 
 void CommandProcessor::SetReplayMode(bool isReplayActive)
@@ -461,11 +303,9 @@ void CommandProcessor::Run(istream &input)
         }
         else
         {
-            cout
-                << "Unknown command"
-                << endl;
+            cout << "Unknown command" << endl;
         }
-        if(!ReplayMode())
-        this_thread::sleep_for(chrono::seconds(1));
+        if (!ReplayMode())
+            this_thread::sleep_for(chrono::seconds(1));
     }
 }

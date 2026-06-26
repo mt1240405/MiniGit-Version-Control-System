@@ -8,13 +8,10 @@ FileRegistry::Entry::Entry()
     tomb = false;
 }
 
-unsigned long long FileRegistry::HashKey(
-    const string& key) const
+unsigned long long FileRegistry::HashKey(const string &key) const
 {
     const unsigned long long prime = 131;
-
     unsigned long long hash = 0;
-
     for (char character : key)
     {
         hash = hash * prime + character;
@@ -23,23 +20,17 @@ unsigned long long FileRegistry::HashKey(
     return hash;
 }
 
-FileRegistry::FileRegistry(
-    int initialCapacity)
+FileRegistry::FileRegistry(int initialCapacity)
 {
     capacity = initialCapacity;
     size = 0;
-
     table.resize(capacity);
 }
 
-bool FileRegistry::Put(
-    const string& key,
-    FileVersion* value)
+bool FileRegistry::Put(const string &key, FileVersion *value)
 {
     unsigned long long hash = HashKey(key);
-
     int index = hash % capacity;
-
     while (
         table[index].used &&
         !table[index].tomb &&
@@ -47,7 +38,6 @@ bool FileRegistry::Put(
     {
         index = (index + 1) % capacity;
     }
-
     table[index].key = key;
     table[index].value = value;
     table[index].used = true;
@@ -56,40 +46,30 @@ bool FileRegistry::Put(
     return true;
 }
 
-bool FileRegistry::Get(
-    const string& key,
-    FileVersion*& result)
+bool FileRegistry::Get(const string &key, FileVersion *&result)
 {
     unsigned long long hash = HashKey(key);
-
     int index = hash % capacity;
     int start = index;
-
     while (table[index].used)
     {
-        if (
-            !table[index].tomb &&
-            table[index].key == key)
+        if (!table[index].tomb && table[index].key == key)
         {
             result = table[index].value;
-
             return true;
         }
-
         index = (index + 1) % capacity;
-
         if (index == start)
         {
             break;
         }
     }
-
     return false;
 }
 
 void FileRegistry::Clear()
 {
-    for (Entry& entry : table)
+    for (Entry &entry : table)
     {
         if (
             entry.used &&
@@ -99,10 +79,7 @@ void FileRegistry::Clear()
             delete entry.value;
         }
     }
-
     table.clear();
-
     table.resize(capacity);
-
     size = 0;
 }
